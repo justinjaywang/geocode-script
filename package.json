@@ -4,7 +4,7 @@
   "description": "convert CSV to JSON with geocoding",
   "main": "geocode.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node geocode.js < test.csv | diff - test.json "
   },
   "repository": {
     "type": "git",
