@@ -75,7 +75,7 @@ function addLocation(directorObj, n) {
     directorsObjArr.push(directorObj);
     if (directorsObjArr.length==n) { 
       // last director has been added, write to output file
-      fs.writeFile(outputFile, JSON.stringify(directorObjArr));
+      fs.writeFile(outputFile, JSON.stringify(directorObjArr,undefined,2));
     }
   });
 }
