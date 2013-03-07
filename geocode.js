@@ -1,81 +1,87 @@
 // modules
 var fs = require("fs"),
-  geocoder = require('geocoder'),
-  inputFile = 'sample-data.csv',
-  outputFile = 'sample-data-output.json';
+  geocoder = require('geocoder');
 
-// start writing to output file
-fs.writeFile(outputFile, '');
+// Customize delimiter and name of address column here
+delimiter = ";";
+addressColumn = "address";
+
+chunk = '';
+process.stdin.resume();
+
+process.stdin.on('data', function(data) {
+  chunk += data;
+});
 
 // read csv file and write to json file
-fs.readFile(inputFile, 'utf-8', function(err, data) {
-  if (err) throw err;
+process.stdin.on('end', function() {
+  data = chunk;
   
   // convert csv to arrays
-  directorArr = csv2array(data);
-  labelArr = directorArr[0];
-  directorArr.splice(0, 1);
+  markerArr = csv2array(data);
+  labelArr = markerArr[0];
+  markerArr.splice(0, 1);
   
   // convert arrays to objects
-  directorObjArr = array2obj(labelArr, directorArr);
+  markerObjArr = array2obj(labelArr, markerArr);
 
   // add lat and lng to each object and write to output file
-  directorObjArr.forEach(function(directorObj) {
-    addLocation(directorObj, directorObjArr.length);
+  markerObjArr.forEach(function(markerObj) {
+    addLocation(markerObj, markerObjArr.length);
   })
 });
 
 // functions
 function csv2array(data) {
-  // inputs csv data and returns an array (length equal to number of lines) of director arrays
+  // inputs csv data and returns an array (length equal to number of lines) of marker arrays
   lines = data.toString().split('\n');
-  // populate directors array
-  directorArr = [];
+  // populate markers array
+  markerArr = [];
   lines.forEach(function (line) {
     if (line.length!=0) {
-      fields = line.split(';');
+      fields = line.split(delimiter);
       for (i=0; i<fields.length; i++) {
         fields[i] =  fields[i].trim();
       }
-      directorArr.push(fields);
+      markerArr.push(fields);
     }
   })
-  return directorArr;
+  return markerArr;
 }
 
-function array2obj(labels, directors) {
-  // inputs directors array and returns an array of director objects
-  directorObjArr = [];
-  directors.forEach(function(director) {
-    directorObj = {};
+function array2obj(labels, markers) {
+  // inputs markers array and returns an array of marker objects
+  markerObjArr = [];
+  markers.forEach(function(marker) {
+    markerObj = {};
     for (j=0; j<labels.length; j++) {
-      directorObj[labels[j]] = director[j];
+      markerObj[labels[j]] = marker[j];
     }
-    directorObjArr.push(directorObj);
+    markerObjArr.push(markerObj);
   });
-  return directorObjArr;
+  return markerObjArr;
 }
 
-function addLocation(directorObj, n) {
-  // inputs directorObj and length of directorObjArr
-  // append lat, lng to director object and writes to output file
-  directorsObjArr = []; // instantiate new directors object array
-  geocoder.geocode(directorObj['address'], function(err, data) {
+function addLocation(markerObj, n) {
+  // inputs markerObj and length of markerObjArr
+  // append lat, lng to marker object and writes to output file
+  markersObjArr = []; // instantiate new markers object array
+  geocoder.geocode(markerObj[addressColumn], function(err, data) {
     if (err) {
-      console.log('Geocoding failed for director ' + directorObj['name']);
+      console.log('Geocoding failed for marker ' + markerObj['name']);
       lat = lng = '';
     } else {
       location = data.results[0].geometry.location;
       lat = location.lat;
       lng = location.lng;
     }
-    // set lat, lng from query as keys in directorObj, then push to array
-    directorObj['lat'] = lat;
-    directorObj['lng'] = lng;
-    directorsObjArr.push(directorObj);
-    if (directorsObjArr.length==n) { 
-      // last director has been added, write to output file
-      fs.writeFile(outputFile, JSON.stringify(directorObjArr,undefined,2));
+    // set lat, lng from query as keys in markerObj, then push to array
+    markerObj['lat'] = lat;
+    markerObj['lng'] = lng;
+    markersObjArr.push(markerObj);
+    if (markersObjArr.length==n) { 
+      // last marker has been added, write to output file
+      process.stdout.write( JSON.stringify(markerObjArr,undefined,2));
     }
   });
 }
