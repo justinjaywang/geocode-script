@@ -1,0 +1,20 @@
+{
+  "name": "geocode-script",
+  "version": "0.0.1",
+  "description": "convert CSV to JSON with geocoding",
+  "main": "geocode.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/justinjaywang/geocode-script.git"
+  },
+  "author": "",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "e1a7379c9d62b706ca1a658dd2f0219332c787b0",
+  "dependencies": {
+    "geocoder": "~0.1.0"
+  }
+}
