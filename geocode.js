@@ -1,35 +1,32 @@
 // modules
-var fs = require("fs"),
+var fs = require('fs'),
   geocoder = require('geocoder');
 
-// customize delimiter and name of address column here
-delimiter = ";";
-addressColumn = "address";
+// customize delimiter and name of address column
+var delimiter = ';';
+var addressColumn = 'address';
 
-chunk = '';
+// read from stdin
 process.stdin.resume();
+var size = fs.fstatSync(process.stdin.fd).size; // get buffer size
+var response = fs.readSync(process.stdin.fd, size, 0); // fs.readSync(fd, buffer, offset)
+process.stdin.pause();
 
-process.stdin.on('data', function(data) {
-  chunk += data;
-});
+// data is first item in reponse array
+data = response[0];
 
-// read csv file and write to json file
-process.stdin.on('end', function() {
-  data = chunk;
-  
-  // convert csv to arrays
-  markerArr = csv2array(data);
-  labelArr = markerArr[0];
-  markerArr.splice(0, 1);
-  
-  // convert arrays to objects
-  markerObjArr = array2obj(labelArr, markerArr);
+// convert csv to arrays
+markerArr = csv2array(data);
+labelArr = markerArr[0];
+markerArr.splice(0, 1);
 
-  // add lat and lng to each object and write to output file
-  markerObjArr.forEach(function(markerObj) {
-    addLocation(markerObj, markerObjArr.length);
-  })
-});
+// convert arrays to objects
+markerObjArr = array2obj(labelArr, markerArr);
+
+// add lat and lng to each object and write to output file
+markerObjArr.forEach(function(markerObj) {
+  addLocation(markerObj, markerObjArr.length);
+})
 
 // functions
 function csv2array(data) {
