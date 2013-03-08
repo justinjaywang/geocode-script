@@ -2,7 +2,7 @@
 var fs = require("fs"),
   geocoder = require('geocoder');
 
-// Customize delimiter and name of address column here
+// customize delimiter and name of address column here
 delimiter = ";";
 addressColumn = "address";
 
@@ -81,7 +81,7 @@ function addLocation(markerObj, n) {
     markersObjArr.push(markerObj);
     if (markersObjArr.length==n) { 
       // last marker has been added, write to output file
-      process.stdout.write( JSON.stringify(markerObjArr,undefined,2));
+      process.stdout.write(JSON.stringify(markerObjArr,undefined,2));
     }
   });
 }
