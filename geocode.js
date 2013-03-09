@@ -79,6 +79,7 @@ function addLocation(markerObj, n) {
     if (markersObjArr.length==n) { 
       // last marker has been added, write to output file
       process.stdout.write(JSON.stringify(markerObjArr,undefined,2));
+      process.stdout.write("\n");
     }
   });
 }
