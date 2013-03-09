@@ -2,9 +2,8 @@
 var fs = require('fs'),
   geocoder = require('geocoder');
 
-// customize delimiter and name of address column
-var delimiter = ';';
-var addressColumn = 'address';
+// customize name of address column
+var addressColumn = 'Address';
 
 // read from stdin
 process.stdin.resume();
@@ -36,9 +35,10 @@ function csv2array(data) {
   markerArr = [];
   lines.forEach(function (line) {
     if (line.length!=0) {
-      fields = line.split(delimiter);
+      // fields = line.split(delimiter);
+      fields = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
       for (i=0; i<fields.length; i++) {
-        fields[i] =  fields[i].trim();
+        fields[i] =  fields[i].replace(/"/g,''); // remove surrounding double quotes
       }
       markerArr.push(fields);
     }
